@@ -94,7 +94,6 @@ function updateStatus(userList, taskList, paramLimitTime) {
         new Promise((resolve, reject) => {
             resolve(downloadSubmissions(user))
         }).then((submissions) => {
-            console.log(submissions)
             for (let j = 0; j < taskList.length; j++) {
                 const task = taskList[j]
                 const td = document.getElementById('taskTableBody').children[i].children[1 + j]
@@ -133,7 +132,6 @@ function updateStatus(userList, taskList, paramLimitTime) {
 }
 
 function getTimeD(date) {
-    console.log(date)
     return ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2)
 }
 
