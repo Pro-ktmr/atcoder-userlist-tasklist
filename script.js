@@ -112,7 +112,7 @@ function updateStatus(userList, taskList, paramLimitTime) {
                 lastTimeD.setUTCSeconds(lastTime)
                 const now = new Date()
                 const elapsedTime = now - fisrtTimeD
-                td.classList.remove('table-warning', 'table-success')
+                td.classList.remove('table-warning', 'table-success', 'table-danger')
                 if (status == 0) {
                     td.children[0].innerHTML = '-'
                 }
