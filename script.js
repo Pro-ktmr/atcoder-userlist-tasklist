@@ -118,7 +118,7 @@ function updateStatus(userList, taskList, paramLimitTime) {
                 }
                 if (status == 1) {
                     td.children[0].innerHTML = `x<div class="text-muted" style="font-size: 0.6rem;">${getTimeD(fisrtTimeD)}</div><div class="text-muted" style="font-size: 0.6rem;">${getTimeD(lastTimeD)}</div>`
-                    if (elapsedTime >= paramLimitTime) td.classList.add('table-danger')
+                    if (elapsedTime >= paramLimitTime * 1000) td.classList.add('table-danger')
                     else td.classList.add('table-warning')
 
                 }
