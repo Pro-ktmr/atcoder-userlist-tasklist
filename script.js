@@ -3,22 +3,24 @@ window.onload = () => {
     const paramUserList = params.has('userList') ? params.get('userList') : ''
     const paramTaskList = params.has('taskList') ? params.get('taskList') : ''
     const paramLimitTime = params.has('limitTime') ? params.get('limitTime') : 600
+    const paramWholeLimitTime = params.has('wholeLimitTime') ? params.get('wholeLimitTime') : 60 * 60 * 24 * 365 * 1000
 
-    reflectQuery(paramUserList, paramTaskList, paramLimitTime)
+    reflectQuery(paramUserList, paramTaskList, paramLimitTime, paramWholeLimitTime)
 
     const userList = loadUserList(paramUserList)
     const taskList = loadTaskList(paramTaskList)
 
     makeTable(userList, taskList)
 
-    setTimeout(updateStatus, 1, userList, taskList, paramLimitTime)
-    setInterval(updateStatus, 60 * 1000, userList, taskList, paramLimitTime)
+    setTimeout(updateStatus, 1, userList, taskList, paramLimitTime, paramWholeLimitTime)
+    setInterval(updateStatus, 60 * 1000, userList, taskList, paramLimitTime, paramWholeLimitTime)
 }
 
-function reflectQuery(userList, taskList, limitTime) {
+function reflectQuery(userList, taskList, limitTime, wholeLimitTime) {
     document.getElementById('userList').innerHTML = userList
     document.getElementById('taskList').innerHTML = taskList
     document.getElementById('limitTime').value = limitTime
+    document.getElementById('wholeLimitTime').value = wholeLimitTime
 }
 
 function loadUserList(paramUserList) {
@@ -76,7 +78,7 @@ function makeTable(userList, taskList) {
     for (const user of userList) {
         const tr = document.createElement('tr')
         const tdUser = document.createElement('td')
-        tdUser.innerHTML = `<a href="https://kenkoooo.com/atcoder/#/user/${user}?userPageTab=Submissions" target="_blank">${user}</a>`
+        tdUser.innerHTML = `<a href="https://kenkoooo.com/atcoder/#/user/${user}?userPageTab=Submissions" target="_blank">${user}<div class="text-muted" style="font-size: 0.6rem;"></div></a>`
         tr.appendChild(tdUser)
         for (const task of taskList) {
             const td = document.createElement('td')
@@ -88,12 +90,26 @@ function makeTable(userList, taskList) {
     }
 }
 
-function updateStatus(userList, taskList, paramLimitTime) {
+function updateStatus(userList, taskList, paramLimitTime, paramWholeLimitTime) {
     for (let i = 0; i < userList.length; i++) {
         const user = userList[i]
         new Promise((resolve, reject) => {
             resolve(downloadSubmissions(user))
         }).then((submissions) => {
+            const now = new Date()
+
+            const wholeLastTimeTd = document.getElementById('taskTableBody').children[i].children[0]
+            let wholeLastTime = 0
+            for (const submission of submissions) {
+                wholeLastTime = Math.max(wholeLastTime, submission['epoch_second'])
+            }
+            wholeLastTimeTd.classList.remove('table-danger')
+            const wholeLastTimeTdD = new Date(0)
+            wholeLastTimeTdD.setUTCSeconds(wholeLastTime)
+            wholeLastTimeTd.children[0].children[0].innerHTML = getTimeD(wholeLastTimeTdD)
+            const elapsedTime = now - wholeLastTimeTdD
+            if (elapsedTime >= paramWholeLimitTime * 1000) wholeLastTimeTd.classList.add('table-danger')
+
             for (let j = 0; j < taskList.length; j++) {
                 const task = taskList[j]
                 const td = document.getElementById('taskTableBody').children[i].children[1 + j]
@@ -110,7 +126,6 @@ function updateStatus(userList, taskList, paramLimitTime) {
                 fisrtTimeD.setUTCSeconds(firstTime)
                 const lastTimeD = new Date(0)
                 lastTimeD.setUTCSeconds(lastTime)
-                const now = new Date()
                 const elapsedTime = now - fisrtTimeD
                 td.classList.remove('table-warning', 'table-success', 'table-danger')
                 if (status == 0) {

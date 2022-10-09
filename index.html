@@ -81,8 +81,13 @@ B,https://atcoder.jp/contests/abc271/tasks/abc271_b
 (問題で改行区切りで入力，各問題は[表示問題名][半角カンマ 1 個][URL]の順，問題名は正式名称でなくても OK)"></textarea>
                     </div>
                     <div class="col-12 mb-4">
-                        <label for="limitTime" class="form-label">初提出から正解できずにこの秒数が経過したら警告</label>
+                        <label for="limitTime" class="form-label">各問題で初提出から正解できずにこの秒数が経過したら警告</label>
                         <input type="number" class="form-control" id="limitTime" name="limitTime" placeholder="600" />
+                    </div>
+                    <div class="col-12 mb-4">
+                        <label for="wholeLimitTime" class="form-label">正誤を問わず最後の提出からこの時間が経過したら警告</label>
+                        <input type="number" class="form-control" id="wholeLimitTime" name="wholeLimitTime"
+                            placeholder="1200" />
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary">表示</button>
