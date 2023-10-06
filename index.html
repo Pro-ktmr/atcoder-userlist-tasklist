@@ -13,13 +13,34 @@
         crossorigin="anonymous"></script>
 
     <style>
+        .container {
+            padding: 0;
+        }
+
         table a {
             display: block;
             text-decoration: none;
+            min-width: 3rem;
         }
 
         table a:hover {
             background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        th.user {
+            position: sticky;
+            left: 0;
+            background: white;
+        }
+
+        th.user::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            border: 1px #dee2e6 solid;
         }
 
         .table-danger {
@@ -101,7 +122,7 @@ B,https://atcoder.jp/contests/abc271/tasks/abc271_b
         <table class="table table-bordered">
             <thead>
                 <tr id="taskTableHeader">
-                    <th>ユーザ名</th>
+                    <th class="user">ユーザ名</th>
                 </tr>
             </thead>
             <tbody id="taskTableBody">

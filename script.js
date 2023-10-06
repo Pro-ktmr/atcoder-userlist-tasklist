@@ -77,9 +77,10 @@ function makeTable(userList, taskList) {
     const tBody = document.getElementById('taskTableBody')
     for (const user of userList) {
         const tr = document.createElement('tr')
-        const tdUser = document.createElement('td')
-        tdUser.innerHTML = `<a href="https://kenkoooo.com/atcoder/#/user/${user}?userPageTab=Submissions" target="_blank">${user}<div class="text-muted" style="font-size: 0.6rem;"></div></a>`
-        tr.appendChild(tdUser)
+        const thUser = document.createElement('th')
+        thUser.innerHTML = `<a href="https://kenkoooo.com/atcoder/#/user/${user}?userPageTab=Submissions" target="_blank">${user}<div class="text-muted" style="font-size: 0.6rem;"></div></a>`
+        thUser.classList.add("user")
+        tr.appendChild(thUser)
         for (const task of taskList) {
             const td = document.createElement('td')
             td.style = 'text-align: center'
@@ -98,17 +99,17 @@ function updateStatus(userList, taskList, paramLimitTime, paramWholeLimitTime) {
         }).then((submissions) => {
             const now = new Date()
 
-            const wholeLastTimeTd = document.getElementById('taskTableBody').children[i].children[0]
+            const wholeLastTimeTh = document.getElementById('taskTableBody').children[i].children[0]
             let wholeLastTime = 0
             for (const submission of submissions) {
                 wholeLastTime = Math.max(wholeLastTime, submission['epoch_second'])
             }
-            wholeLastTimeTd.classList.remove('table-danger')
+            wholeLastTimeTh.classList.remove('table-danger')
             const wholeLastTimeTdD = new Date(0)
-            wholeLastTimeTdD.setUTCSeconds(wholeLastTime)
-            wholeLastTimeTd.children[0].children[0].innerHTML = getTimeD(wholeLastTimeTdD)
+            wholeLastTimeTdD.setUTCSeconds(wholeLastTime > 0 ? wholeLastTime : 1000000000000000000)
+            wholeLastTimeTh.children[0].children[0].innerHTML = wholeLastTime > 0 ? getTimeD(wholeLastTimeTdD) : ""
             const elapsedTime = now - wholeLastTimeTdD
-            if (elapsedTime >= paramWholeLimitTime * 1000) wholeLastTimeTd.classList.add('table-danger')
+            if (elapsedTime >= paramWholeLimitTime * 1000) wholeLastTimeTh.classList.add('table-danger')
 
             for (let j = 0; j < taskList.length; j++) {
                 const task = taskList[j]
@@ -122,24 +123,28 @@ function updateStatus(userList, taskList, paramLimitTime, paramWholeLimitTime) {
                     firstTime = Math.min(firstTime, submission['epoch_second'])
                     lastTime = Math.max(lastTime, submission['epoch_second'])
                 }
-                const fisrtTimeD = new Date(0)
-                fisrtTimeD.setUTCSeconds(firstTime)
+                const firstTimeD = new Date(0)
+                firstTimeD.setUTCSeconds(firstTime)
                 const lastTimeD = new Date(0)
                 lastTimeD.setUTCSeconds(lastTime)
-                const elapsedTime = now - fisrtTimeD
+                const elapsedTime = now - firstTimeD
                 td.classList.remove('table-warning', 'table-success', 'table-danger')
                 if (status == 0) {
                     td.children[0].innerHTML = '-'
                 }
                 if (status == 1) {
-                    td.children[0].innerHTML = `x<div class="text-muted" style="font-size: 0.6rem;">${getTimeD(fisrtTimeD)}</div><div class="text-muted" style="font-size: 0.6rem;">${getTimeD(lastTimeD)}</div>`
+                    td.children[0].innerHTML = "x"
                     if (elapsedTime >= paramLimitTime * 1000) td.classList.add('table-danger')
                     else td.classList.add('table-warning')
 
                 }
                 if (status == 2) {
-                    td.children[0].innerHTML = `o<div class="text-muted" style="font-size: 0.6rem;">${getTimeD(fisrtTimeD)}</div><div class="text-muted" style="font-size: 0.6rem;">${getTimeD(lastTimeD)}</div>`
+                    td.children[0].innerHTML = "o"
                     td.classList.add('table-success')
+                }
+                if (1 <= status && status <= 2) {
+                    td.children[0].innerHTML += `<div class="text-muted" style="font-size: 0.6rem;">${now - firstTimeD <= 1000 * 60 * 60 * 24 ? getTimeD(firstTimeD) : "1日以上前"}</div><div class="text-muted" style="font-size: 0.6rem;">${now - lastTimeD <= 1000 * 60 * 60 * 24 ? getTimeD(lastTimeD) : "1日以上前"}</div>`
+                    console.log(now - firstTimeD)
                 }
             }
         });
