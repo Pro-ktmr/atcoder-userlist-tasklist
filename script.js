@@ -144,7 +144,6 @@ function updateStatus(userList, taskList, paramLimitTime, paramWholeLimitTime) {
                 }
                 if (1 <= status && status <= 2) {
                     td.children[0].innerHTML += `<div class="text-muted" style="font-size: 0.6rem;">${now - firstTimeD <= 1000 * 60 * 60 * 24 ? getTimeD(firstTimeD) : "1日以上前"}</div><div class="text-muted" style="font-size: 0.6rem;">${now - lastTimeD <= 1000 * 60 * 60 * 24 ? getTimeD(lastTimeD) : "1日以上前"}</div>`
-                    console.log(now - firstTimeD)
                 }
             }
         });
